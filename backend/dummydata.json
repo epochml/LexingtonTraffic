@@ -1,6 +1,20 @@
 {
-    "timestamp": 1741315109,
-    "ESP": 1,
-    "broken-time": 20.6220,
-    "broken-count": 8
+    "0": {
+        "timestamp": 1741315109,
+        "ESP": 2,
+        "broken-time": 20.6220,
+        "broken-count": 8
+    },
+    "1": {
+        "timestamp": 1741315601,
+        "ESP": 1,
+        "broken-time": 5.8694,
+        "broken-count": 7
+    },
+    "2": {
+        "timestamp": 1741319109,
+        "ESP": 0,
+        "broken-time": 40.3000,
+        "broken-count": 30
+    }
 }
