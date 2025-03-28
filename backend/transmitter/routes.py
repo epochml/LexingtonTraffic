@@ -1,11 +1,6 @@
-from flask import Flask, request
-import json
-from markupsafe import escape
-
-app = Flask(__name__)
+from __main__ import app
 
 @app.route("/")
-
 def welcome():
     return "<p>Hello, use the api pls at /api or check docs at /docs</p>"
 
@@ -38,7 +33,3 @@ def get_range():
 @app.route("/docs")
 def get_docs():
     return "<h1>Docs</h1><h2>/api/lastx</h2><p>returns the last x pieces of data. access by using /api/lastx?num=z where z is the last z pieces of data you want.</p><h2>/api/getrange</h2><p>returns the pieces of data in range y z. access by using /api/getrange?start=y&stop=z where y is the first piece of data and z is the last.</p>"
-
-
-if __name__ == '__main__':
-    app.run()
