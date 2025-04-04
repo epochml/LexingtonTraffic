@@ -131,3 +131,6 @@ dist
 
 # Python cache
 __pycache__/
+
+#vscode files
+.vscode/
