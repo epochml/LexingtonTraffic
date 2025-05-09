@@ -1,25 +1,21 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-const char* ssid = "IMSApublic";
-const char* password = "IMSAfall24";
+constexpr const char* SSID = "IMSApublic";
+constexpr const char* PASSWORD = "IMSAfall24";
+constexpr const char* SERVER_NAME_1 = "http://google.com";
+constexpr const char* SERVER_NAME_2 = "http://143.195.93.84:5000/upload_data";
+constexpr unsigned long FRAME_LENGTH_MS = 5000;
 
-//Your Domain name with URL path or IP address with path
-const char* serverName1 = "http://google.com";
-const char* serverName2 = "http://143.195.93.84:5000/upload_data";
-// the following variables are unsigned longs because the time, measured in
-// milliseconds, will quickly become a bigger number than can be stored in an int.
+unsigned long lastMillis = 0;
 unsigned long lastTime = 0;
-// Timer set to 10 minutes (600000)
-//unsigned long timerDelay = 600000;
-// Set timer to 5 seconds (5000)
-unsigned long timerDelay = 5000;
+unsigned int passes = 0; // Number of times beam breaker changed state in the current frame
+unsigned long timeTriggered = 0; // Amount of time the beam breaker was triggered in the current frame
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
 
-  WiFi.begin(ssid, password);
+  WiFi.begin(SSID, PASSWORD);
   Serial.println("Connecting");
   while(WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -29,12 +25,19 @@ void setup() {
   Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
  
-  Serial.println("Timer set to 5 seconds (timerDelay variable), it will take 5 seconds before publishing the first reading.");
+  Serial.print("Timer set to ");
+  Serial.print(FRAME_LENGTH_MS);
+  Serial.println(" milliseconds");
+
+  lastMillis = millis();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  if ((millis() - lastTime) > timerDelay) {
+  bool measurement = getMeasurement();
+  unsigned long deltaTime = millis() - lastMillis;
+  timeTriggered += measurement ? deltaTime : 0;
+
+  if ((millis() - lastTime) > FRAME_LENGTH_MS) {
     //Check WiFi connection status
     if(WiFi.status()== WL_CONNECTED){
       WiFiClient client;
@@ -42,8 +45,8 @@ void loop() {
       HTTPClient http1;
     
       // Your Domain name with URL path or IP address with path
-      http.begin(client, serverName1);
-      http1.begin(client, serverName2);
+      http.begin(client, SERVER_NAME_1);
+      http1.begin(client, SERVER_NAME_2);
       
       // If you need Node-RED/server authentication, insert user and password below
       //http.setAuthorization("REPLACE_WITH_SERVER_USERNAME", "REPLACE_WITH_SERVER_PASSWORD");
@@ -77,4 +80,11 @@ void loop() {
     }
     lastTime = millis();
   }
+}
+
+/**
+ * Returns true if something is blocking the beam breaker.
+ */
+bool getMeasurement() {
+  return false;
 }
